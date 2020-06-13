@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include <iostream>
+#include <cmath>
 #include <string>
 
 Renderer::Renderer(const std::size_t screen_width,
@@ -38,14 +39,12 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const snake, SDL_Point const &food) {
+void Renderer::RenderGame(Snake const snake, SDL_Point const &food) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
 
-  // Clear screen
-  SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
-  SDL_RenderClear(sdl_renderer);
+  ClearScreen();
 
   // Render food
   SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xCC, 0x00, 0xFF);
@@ -74,6 +73,59 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
   // Update Screen
   SDL_RenderPresent(sdl_renderer);
 }
+
+void Renderer::RenderMainMenu(GameMenu<MainMenuOptions> const menu) {
+
+  int button_width = 200;
+  int button_height = 40;
+  int x_pos = ceil(screen_width / 2) - (button_width / 2);
+  int initial_y_pos = ceil(screen_height / 2) - 75;
+  int margin = 10;
+
+  ClearScreen();
+  const MainMenuOptions highltedOption = menu.highlightedOption;
+  DrawButton(x_pos, initial_y_pos, button_width, button_height,  highltedOption == MainMenuOptions::kStartGame);
+  DrawButton(x_pos, initial_y_pos + button_height + margin, button_width, button_height, highltedOption == MainMenuOptions::kSetGameMode);
+  DrawButton(x_pos, initial_y_pos + (2 * button_height) + (2 * margin), button_width, button_height, highltedOption == MainMenuOptions::kSetDifficulty);
+  DrawButton(x_pos, initial_y_pos + (3 * button_height) + (3 * margin), button_width , button_height, highltedOption == MainMenuOptions::kExitGame);
+
+  // Update Screen
+  SDL_RenderPresent(sdl_renderer);
+}
+
+void Renderer::ClearScreen() {
+  // Clear screen
+  SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
+  SDL_RenderClear(sdl_renderer);
+}
+
+void Renderer::DrawButton(int x, int y, int width, int height, bool active=false) {
+  SDL_Rect button = {x, y, width, height};
+  if (active) {
+    SDL_SetRenderDrawColor(sdl_renderer, 255, 0, 0, 255); // solid red for active
+  } else {
+    SDL_SetRenderDrawColor(sdl_renderer, 255, 255, 255, 255);
+  }
+  SDL_RenderDrawRect(sdl_renderer, &button);
+}
+
+// void Renderer::DrawButton(int x, int y, int width, int height, bool active=false) {
+//   SDL_Color color;  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
+//   if (active) {
+//     color = {255, 0, 0}; // solid red for active
+//   } else {
+//     color = {255, 255, 255};
+//   }
+
+//   SDL_Surface* surfaceMessage = TTF_RenderText_Solid(NULL, "put your text here", color);
+//   SDL_Texture* Message = SDL_CreateTextureFromSurface(sdl_renderer, surfaceMessage);
+//   SDL_Rect button = {x, y, width, height};
+
+//   SDL_RenderCopy(sdl_renderer, Message, NULL, &button);
+
+//   SDL_FreeSurface(surfaceMessage);
+//   SDL_DestroyTexture(Message);
+// }
 
 void Renderer::UpdateWindowTitle(int score, int fps) {
   std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};

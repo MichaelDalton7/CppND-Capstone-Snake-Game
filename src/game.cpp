@@ -4,6 +4,7 @@
 
 Game::Game(std::size_t grid_width, std::size_t grid_height)
     : snake(grid_width, grid_height),
+      mainMenu(MainMenuOptions::kStartGame),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width)),
       random_h(0, static_cast<int>(grid_height)) {
@@ -23,9 +24,14 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snake);
-    Update();
-    renderer.Render(snake, food);
+    switch(state) {
+      case GameState::kMainMenuState: 
+        RunMainMenu(controller, renderer, running);
+        break;
+      case GameState::kGameState:
+        RunGame(controller, renderer, running);
+        break;
+    }
 
     frame_end = SDL_GetTicks();
 
@@ -50,6 +56,32 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
+void Game::RunMainMenu(Controller const &controller, Renderer &renderer, bool &running) {
+  // There are 4 options in the main menu as can be seen by the enum MainMenuOptions
+  controller.HandleInputMenu(running, mainMenu, 3, [&](MainMenuOptions selectedOption){
+    switch(selectedOption) {
+      case MainMenuOptions::kStartGame:
+        state = GameState::kGameState;
+        return;
+      case MainMenuOptions::kSetGameMode:
+        return;
+      case MainMenuOptions::kSetDifficulty:
+        return;
+      case MainMenuOptions::kExitGame:
+        running = false;
+        return;
+    }
+  });
+  UpdateMainMenu();
+  renderer.RenderMainMenu(mainMenu);
+}
+
+void Game::RunGame(Controller const &controller, Renderer &renderer, bool &running) {
+  controller.HandleInputGame(running, snake);
+  UpdateGame();
+  renderer.RenderGame(snake, food);
+}
+
 void Game::PlaceFood() {
   int x, y;
   while (true) {
@@ -65,7 +97,7 @@ void Game::PlaceFood() {
   }
 }
 
-void Game::Update() {
+void Game::UpdateGame() {
   if (!snake.alive) return;
 
   snake.Update();
@@ -82,6 +114,8 @@ void Game::Update() {
     snake.speed += 0.02;
   }
 }
+
+void Game::UpdateMainMenu() {}
 
 int Game::GetScore() const { return score; }
 int Game::GetSize() const { return snake.size; }

@@ -6,6 +6,7 @@
 #include "controller.h"
 #include "renderer.h"
 #include "snake.h"
+#include "menu.h"
 
 class Game {
  public:
@@ -17,7 +18,9 @@ class Game {
 
  private:
   Snake snake;
+  GameMenu<MainMenuOptions> mainMenu;
   SDL_Point food;
+  GameState state{GameState::kMainMenuState};
 
   std::random_device dev;
   std::mt19937 engine;
@@ -27,7 +30,10 @@ class Game {
   int score{0};
 
   void PlaceFood();
-  void Update();
+  void UpdateGame();
+  void UpdateMainMenu();
+  void RunGame(Controller const &controller, Renderer &renderer, bool &running);
+  void RunMainMenu(Controller const &controller, Renderer &renderer, bool &running);
 };
 
 #endif

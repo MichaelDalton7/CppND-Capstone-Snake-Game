@@ -4,6 +4,8 @@
 #include <vector>
 #include "SDL.h"
 #include "snake.h"
+#include "gameMenu.h"
+#include "constants.h"
 
 class Renderer {
  public:
@@ -11,7 +13,8 @@ class Renderer {
            const std::size_t grid_width, const std::size_t grid_height);
   ~Renderer();
 
-  void Render(Snake const snake, SDL_Point const &food);
+  void RenderGame(Snake const snake, SDL_Point const &food);
+  void RenderMainMenu(GameMenu<MainMenuOptions> const menu);
   void UpdateWindowTitle(int score, int fps);
 
  private:
@@ -22,6 +25,9 @@ class Renderer {
   const std::size_t screen_height;
   const std::size_t grid_width;
   const std::size_t grid_height;
+
+  void ClearScreen();
+  void DrawButton(int x, int y, int width, int height, bool active);
 };
 
 #endif
