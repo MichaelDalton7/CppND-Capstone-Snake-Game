@@ -37,9 +37,9 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "SDL_TTF could not initialize.\n";
     std::cerr << "SDL_TTF_Error: " << TTF_GetError() << std::endl;
   }
-  buttonFont = TTF_OpenFont("../fonts/Arial.ttf", 24);
-
-  if (buttonFont == nullptr) {
+  button_font = TTF_OpenFont("../fonts/Arial.ttf", 24);
+  heading_font = TTF_OpenFont("../fonts/Arial.ttf", 36);
+  if (button_font == nullptr || heading_font == nullptr) {
     std::cerr << "Renderer could not be created." << std::endl;
     std::cerr << "Unable to open font \n" << std::endl;
     std::cerr << "SDL_TTF_Error: " << TTF_GetError() << std::endl;
@@ -48,7 +48,8 @@ Renderer::Renderer(const std::size_t screen_width,
 
 Renderer::~Renderer() {
   SDL_DestroyWindow(sdl_window);
-  TTF_CloseFont(buttonFont);
+  TTF_CloseFont(button_font);
+  TTF_CloseFont(heading_font);
   TTF_Quit();
   SDL_Quit();
 }
@@ -108,6 +109,8 @@ void Renderer::RenderMenu(GameMenu<MainMenuOptions> const menu) {
 
   ClearScreen();
   const MainMenuOptions highltedOption = menu.highlightedOption;
+  DrawHeading(x_pos - 25, initial_y_pos - 90,
+    button_width + 50, button_height + 30, "Snake");
   DrawButton(
     x_pos, initial_y_pos, 
     button_width, button_height, 
@@ -128,7 +131,7 @@ void Renderer::RenderMenu(GameMenu<MainMenuOptions> const menu) {
 
 void Renderer::RenderMenu(GameMenu<Difficulty> const menu) {
 
-  int button_width = 200;
+  int button_width = 100;
   int button_height = 40;
   int x_pos = ceil(screen_width / 2) - (button_width / 2);
   int initial_y_pos = ceil(screen_height / 2) - 75;
@@ -136,6 +139,8 @@ void Renderer::RenderMenu(GameMenu<Difficulty> const menu) {
 
   ClearScreen();
   const Difficulty highltedOption = menu.highlightedOption;
+  DrawHeading(x_pos - 75, initial_y_pos - 90,
+    button_width + 150, button_height + 30, "Difficulty");
   DrawButton(
     x_pos, initial_y_pos, 
     button_width, button_height, 
@@ -153,7 +158,7 @@ void Renderer::RenderMenu(GameMenu<Difficulty> const menu) {
 
 void Renderer::RenderMenu(GameMenu<GameMode> const menu) {
 
-  int button_width = 200;
+  int button_width = 250;
   int button_height = 40;
   int x_pos = ceil(screen_width / 2) - (button_width / 2);
   int initial_y_pos = ceil(screen_height / 2) - 75;
@@ -161,6 +166,8 @@ void Renderer::RenderMenu(GameMenu<GameMode> const menu) {
 
   ClearScreen();
   const GameMode highltedOption = menu.highlightedOption;
+  DrawHeading(x_pos - 25, initial_y_pos - 90,
+    button_width + 50, button_height + 30, "Game Mode");
   DrawButton(
     x_pos, initial_y_pos, 
     button_width, button_height, 
@@ -183,17 +190,31 @@ void Renderer::DrawButton(int x, int y, int width, int height, const std::string
 
   SDL_Color color;
   if (active) {
-    color = { 255, 0, 0 }; 
+    color = { 0, 255, 0 }; 
   } else {
     color = { 255, 255, 255 }; 
   }
 
   const char * text = buttonText.c_str();
-  SDL_Surface* surfaceMessage = TTF_RenderText_Solid(buttonFont, text, color); 
+  SDL_Surface* surfaceMessage = TTF_RenderText_Solid(button_font, text, color); 
   SDL_Texture* Message = SDL_CreateTextureFromSurface(sdl_renderer, surfaceMessage);
 
   SDL_Rect button = {x, y, width, height};
   SDL_RenderCopy(sdl_renderer, Message, NULL, &button); 
+  SDL_FreeSurface(surfaceMessage);
+  SDL_DestroyTexture(Message);
+}
+
+void Renderer::DrawHeading(int x, int y, int width, int height, const std::string &headingText) {
+
+  SDL_Color color = { 149, 205, 255 };
+
+  const char * text = headingText.c_str();
+  SDL_Surface* surfaceMessage = TTF_RenderText_Solid(heading_font, text, color); 
+  SDL_Texture* Message = SDL_CreateTextureFromSurface(sdl_renderer, surfaceMessage);
+
+  SDL_Rect heading = {x, y, width, height};
+  SDL_RenderCopy(sdl_renderer, Message, NULL, &heading); 
   SDL_FreeSurface(surfaceMessage);
   SDL_DestroyTexture(Message);
 }

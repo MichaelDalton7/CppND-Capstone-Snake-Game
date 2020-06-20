@@ -25,7 +25,8 @@ class Renderer {
  private:
   SDL_Window *sdl_window;
   SDL_Renderer *sdl_renderer;
-  TTF_Font* buttonFont;
+  TTF_Font* heading_font;
+  TTF_Font* button_font;
 
   const std::size_t screen_width;
   const std::size_t screen_height;
@@ -34,6 +35,7 @@ class Renderer {
 
   void ClearScreen();
   void DrawButton(int x, int y, int width, int height, const std::string &buttonText, bool active);
+  void DrawHeading(int x, int y, int width, int height, const std::string &headingText);
 };
 
 #endif
