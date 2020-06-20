@@ -174,7 +174,7 @@ void Renderer::RenderMenu(GameMenu<GameMode> const menu) {
     "Standard Mode", highltedOption == GameMode::kStandardMode);
   DrawButton(x_pos, initial_y_pos + button_height + margin, 
     button_width, button_height, 
-    "Wall Mode", highltedOption == GameMode::kWallMode);
+    "Walls Mode", highltedOption == GameMode::kWallMode);
 
   // Update Screen
   SDL_RenderPresent(sdl_renderer);

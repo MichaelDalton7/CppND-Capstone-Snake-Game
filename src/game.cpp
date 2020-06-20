@@ -51,7 +51,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      std::string selected_game_mode = game_mode == GameMode::kWallMode ? "Wall Mode" : "Standard";
+      std::string selected_game_mode = game_mode == GameMode::kWallMode ? "Walls" : "Standard";
       std::string selected_difficulty = "";
       switch (game_difficulty) {
         case Difficulty::kEasyDiff:
