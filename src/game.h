@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include "snake.h"
 #include "menu.h"
+#include "wallStructure.h"
 
 class Game {
  public:
@@ -17,10 +18,11 @@ class Game {
   int GetSize() const;
 
  private:
-  Snake snake;
-  GameMenu<MainMenuOptions> mainMenu;
-  GameMenu<Difficulty> difficultyMenu;
-  GameMenu<GameMode> gameModeMenu;
+  std::shared_ptr<Snake> snake;
+  std::shared_ptr<WallStructure> wall_structure; 
+  GameMenu<MainMenuOptions> main_menu;
+  GameMenu<Difficulty> difficulty_menu;
+  GameMenu<GameMode> game_mode_menu;
   SDL_Point food;
   GameState state{GameState::kMainMenuState};
 
@@ -30,8 +32,8 @@ class Game {
   std::uniform_int_distribution<int> random_h;
 
   int score{0};
-  Difficulty gameDifficulty = Difficulty::kNormalDiff;
-  GameMode gameMode = GameMode::kStandardMode;
+  Difficulty game_difficulty = Difficulty::kNormalDiff;
+  GameMode game_mode = GameMode::kStandardMode;
 
   void PlaceFood();
   void UpdateGame();

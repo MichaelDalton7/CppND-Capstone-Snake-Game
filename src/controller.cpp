@@ -8,13 +8,13 @@
 std::string kReturnKeyId = "RETURN_KEY";
 std::string kEscapeKeyId = "ESCAPE_KEY";
 
-void Controller::ChangeDirectionGame(Snake &snake, Snake::Direction input,
+void Controller::ChangeDirectionGame(std::shared_ptr<Snake> snake, Snake::Direction input,
                                  Snake::Direction opposite) const {
-  if (snake.direction != opposite || snake.size == 1) snake.direction = input;
+  if (snake->direction != opposite || snake->size == 1) snake->direction = input;
   return;
 }
 
-void Controller::HandleInputGame(bool &running, Snake &snake) const {
+void Controller::HandleInputGame(bool &running, std::shared_ptr<Snake> snake) const {
   SDL_Event e;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
