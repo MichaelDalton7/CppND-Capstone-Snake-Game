@@ -89,8 +89,18 @@ void Game::RunDifficultyMenu(Controller const &controller, Renderer &renderer, b
   // There are 3 options in the difficulty menu as can be seen by the enum Difficulty
   controller.HandleInputMenu(state, difficultyMenu, 2, [&](Difficulty selectedOption) {
     gameDifficulty = selectedOption;
-    // std::cout << "Difficulty: " << static_cast<int>(gameDifficulty) << std::endl;
     state = GameState::kMainMenuState;
+    switch (gameDifficulty) {
+      case Difficulty::kEasyDiff:
+        snake.speed = 0.075f;
+        break;
+      case Difficulty::kNormalDiff:
+        snake.speed = 0.1f;
+        break;
+      case Difficulty::kHardDiff:
+        snake.speed = 0.2f;
+        break;
+    }
   });
   renderer.RenderMenu(difficultyMenu);
 }
@@ -140,7 +150,18 @@ void Game::UpdateGame() {
     PlaceFood();
     // Grow snake and increase speed.
     snake.GrowBody();
-    snake.speed += 0.02;
+    switch (gameDifficulty) {
+      case Difficulty::kEasyDiff:
+        snake.speed += 0.015;
+        break;
+      case Difficulty::kNormalDiff:
+        snake.speed += 0.02;
+        break;
+      case Difficulty::kHardDiff:
+        snake.speed += 0.025;
+        break;
+    }
+    
   }
 }
 
