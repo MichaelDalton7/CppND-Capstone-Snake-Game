@@ -1,8 +1,12 @@
 #include "controller.h"
 #include <iostream>
+#include <string>
 #include "SDL.h"
 #include "snake.h"
 #include "gameMenu.h"
+
+std::string kReturnKeyId = "RETURN_KEY";
+std::string kEscapeKeyId = "ESCAPE_KEY";
 
 void Controller::ChangeDirectionGame(Snake &snake, Snake::Direction input,
                                  Snake::Direction opposite) const {
@@ -44,35 +48,64 @@ void Controller::HandleInputGame(bool &running, Snake &snake) const {
   }
 }
 
+void Controller::HandleInputMenu(GameState& state, GameMenu<Difficulty> &menu, int lastOptionId, 
+                       const std::function <void(Difficulty)> &selectOptionFunction) const {
+  std::string input = HandleMenuNavigation(menu, lastOptionId);
+  if (input.compare(kReturnKeyId) == 0) {
+    selectOptionFunction(menu.highlightedOption);
+  } else if (input.compare(kEscapeKeyId) == 0) {
+    state = GameState::kMainMenuState;
+  }                       
+}
+
+void Controller::HandleInputMenu(GameState& state, GameMenu<GameMode> &menu, int lastOptionId, 
+                       const std::function <void(GameMode)> &selectOptionFunction) const {
+  std::string input = HandleMenuNavigation(menu, lastOptionId);
+  if (input.compare(kReturnKeyId) == 0) {
+    selectOptionFunction(menu.highlightedOption);
+  } else if (input.compare(kEscapeKeyId) == 0) {
+    state = GameState::kMainMenuState;
+  }                       
+}
+
 void Controller::HandleInputMenu(bool &running, GameMenu<MainMenuOptions> &menu, int lastOptionId, 
   								 const std::function <void(MainMenuOptions)> &selectOptionFunction) const {
+  std::string input = HandleMenuNavigation(menu, lastOptionId);
+  if (input.compare(kReturnKeyId) == 0) {
+    selectOptionFunction(menu.highlightedOption);
+  } else if (input.compare(kEscapeKeyId) == 0) {
+    running = false;
+  }
+}
+
+template <typename T>
+std::string Controller::HandleMenuNavigation(GameMenu<T> &menu, int lastOptionId) const {
   SDL_Event e;
   const int optionId = static_cast<int>(menu.highlightedOption);
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
-      running = false;
+      return kEscapeKeyId;
     } else if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         case SDLK_UP:
           // If not the first option change the option
           if (optionId > 0) {
-            menu.highlightedOption = static_cast<MainMenuOptions>(optionId - 1);
+            menu.highlightedOption = static_cast<T>(optionId - 1);
           }
           break;
         case SDLK_DOWN:
           // If not the last option change the option
           if (optionId < lastOptionId) {
-            menu.highlightedOption = static_cast<MainMenuOptions>(optionId + 1);
+            menu.highlightedOption = static_cast<T>(optionId + 1);
           }
           break;
         case SDLK_RETURN:
-          // Do something when return selected
-          selectOptionFunction(menu.highlightedOption);
-          return;
+          return kReturnKeyId;
         case SDLK_ESCAPE:
-          running = false;
-          return;
+          return kEscapeKeyId;
       }
     }
   }
+  return "";
 }
+                   

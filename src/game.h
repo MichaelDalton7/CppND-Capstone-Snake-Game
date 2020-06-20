@@ -19,6 +19,8 @@ class Game {
  private:
   Snake snake;
   GameMenu<MainMenuOptions> mainMenu;
+  GameMenu<Difficulty> difficultyMenu;
+  GameMenu<GameMode> gameModeMenu;
   SDL_Point food;
   GameState state{GameState::kMainMenuState};
 
@@ -28,12 +30,15 @@ class Game {
   std::uniform_int_distribution<int> random_h;
 
   int score{0};
+  Difficulty gameDifficulty = Difficulty::kNormalDiff;
+  GameMode gameMode = GameMode::kStandardMode;
 
   void PlaceFood();
   void UpdateGame();
-  void UpdateMainMenu();
   void RunGame(Controller const &controller, Renderer &renderer, bool &running);
   void RunMainMenu(Controller const &controller, Renderer &renderer, bool &running);
+  void RunDifficultyMenu(Controller const &controller, Renderer &renderer, bool &running);
+  void RunGameModeMenu(Controller const &controller, Renderer &renderer, bool &running);
 };
 
 #endif

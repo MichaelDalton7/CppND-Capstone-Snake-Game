@@ -2,18 +2,25 @@
 #define CONTROLLER_H
 
 #include <functional>
+#include <string>
 #include "snake.h"
 #include "gameMenu.h"
 #include "constants.h"
 
 class Controller {
  public:
-  void HandleInputGame(bool &running, Snake &snake) const;
-  void HandleInputMenu(bool &running, GameMenu<MainMenuOptions> &menu, int lastOptionId, 
+    void HandleInputGame(bool &running, Snake &snake) const;
+    void HandleInputMenu(bool &running, GameMenu<MainMenuOptions> &menu, int lastOptionId, 
                        const std::function <void(MainMenuOptions)> &selectOptionFunction) const;
+    void HandleInputMenu(GameState& state, GameMenu<Difficulty> &menu, int lastOptionId, 
+                       const std::function <void(Difficulty)> &selectOptionFunction) const;
+    void HandleInputMenu(GameState& state, GameMenu<GameMode> &menu, int lastOptionId, 
+                       const std::function <void(GameMode)> &selectOptionFunction) const;
 
  private:
-  void ChangeDirectionGame(Snake &snake, Snake::Direction input,
+    template <typename T>
+    std::string HandleMenuNavigation(GameMenu<T> &menu, int lastOptionId) const;
+    void ChangeDirectionGame(Snake &snake, Snake::Direction input,
                        Snake::Direction opposite) const;
 };
 

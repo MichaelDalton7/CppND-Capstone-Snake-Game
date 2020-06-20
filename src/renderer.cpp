@@ -21,21 +21,35 @@ Renderer::Renderer(const std::size_t screen_width,
                                 SDL_WINDOWPOS_CENTERED, screen_width,
                                 screen_height, SDL_WINDOW_SHOWN);
 
-  if (nullptr == sdl_window) {
+  if (sdl_window == nullptr) {
     std::cerr << "Window could not be created.\n";
     std::cerr << " SDL_Error: " << SDL_GetError() << "\n";
   }
 
   // Create renderer
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
-  if (nullptr == sdl_renderer) {
+  if (sdl_renderer == nullptr) {
     std::cerr << "Renderer could not be created.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+  }
+
+  if (TTF_Init() < 0) {
+    std::cerr << "SDL_TTF could not initialize.\n";
+    std::cerr << "SDL_TTF_Error: " << TTF_GetError() << std::endl;
+  }
+  buttonFont = TTF_OpenFont("../fonts/Arial.ttf", 24);
+
+  if (buttonFont == nullptr) {
+    std::cerr << "Renderer could not be created." << std::endl;
+    std::cerr << "Unable to open font \n" << std::endl;
+    std::cerr << "SDL_TTF_Error: " << TTF_GetError() << std::endl;
   }
 }
 
 Renderer::~Renderer() {
   SDL_DestroyWindow(sdl_window);
+  TTF_CloseFont(buttonFont);
+  TTF_Quit();
   SDL_Quit();
 }
 
@@ -74,7 +88,7 @@ void Renderer::RenderGame(Snake const snake, SDL_Point const &food) {
   SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::RenderMainMenu(GameMenu<MainMenuOptions> const menu) {
+void Renderer::RenderMenu(GameMenu<MainMenuOptions> const menu) {
 
   int button_width = 200;
   int button_height = 40;
@@ -84,10 +98,66 @@ void Renderer::RenderMainMenu(GameMenu<MainMenuOptions> const menu) {
 
   ClearScreen();
   const MainMenuOptions highltedOption = menu.highlightedOption;
-  DrawButton(x_pos, initial_y_pos, button_width, button_height,  highltedOption == MainMenuOptions::kStartGame);
-  DrawButton(x_pos, initial_y_pos + button_height + margin, button_width, button_height, highltedOption == MainMenuOptions::kSetGameMode);
-  DrawButton(x_pos, initial_y_pos + (2 * button_height) + (2 * margin), button_width, button_height, highltedOption == MainMenuOptions::kSetDifficulty);
-  DrawButton(x_pos, initial_y_pos + (3 * button_height) + (3 * margin), button_width , button_height, highltedOption == MainMenuOptions::kExitGame);
+  DrawButton(
+    x_pos, initial_y_pos, 
+    button_width, button_height, 
+    "Start Game", highltedOption == MainMenuOptions::kStartGame);
+  DrawButton(x_pos, initial_y_pos + button_height + margin, 
+    button_width, button_height, 
+    "Set Game Mode", highltedOption == MainMenuOptions::kSetGameMode);
+  DrawButton(x_pos, initial_y_pos + (2 * button_height) + (2 * margin), 
+    button_width, button_height, 
+    "Set Difficulty", highltedOption == MainMenuOptions::kSetDifficulty);
+  DrawButton(x_pos, initial_y_pos + (3 * button_height) + (3 * margin), 
+    button_width , button_height, 
+    "Exit Game", highltedOption == MainMenuOptions::kExitGame);
+
+  // Update Screen
+  SDL_RenderPresent(sdl_renderer);
+}
+
+void Renderer::RenderMenu(GameMenu<Difficulty> const menu) {
+
+  int button_width = 200;
+  int button_height = 40;
+  int x_pos = ceil(screen_width / 2) - (button_width / 2);
+  int initial_y_pos = ceil(screen_height / 2) - 75;
+  int margin = 10;
+
+  ClearScreen();
+  const Difficulty highltedOption = menu.highlightedOption;
+  DrawButton(
+    x_pos, initial_y_pos, 
+    button_width, button_height, 
+    "Easy", highltedOption == Difficulty::kEasyDiff);
+  DrawButton(x_pos, initial_y_pos + button_height + margin, 
+    button_width, button_height, 
+    "Normal", highltedOption == Difficulty::kNormalDiff);
+  DrawButton(x_pos, initial_y_pos + (2 * button_height) + (2 * margin), 
+    button_width, button_height, 
+    "Hard", highltedOption == Difficulty::kHardDiff);
+
+  // Update Screen
+  SDL_RenderPresent(sdl_renderer);
+}
+
+void Renderer::RenderMenu(GameMenu<GameMode> const menu) {
+
+  int button_width = 200;
+  int button_height = 40;
+  int x_pos = ceil(screen_width / 2) - (button_width / 2);
+  int initial_y_pos = ceil(screen_height / 2) - 75;
+  int margin = 10;
+
+  ClearScreen();
+  const GameMode highltedOption = menu.highlightedOption;
+  DrawButton(
+    x_pos, initial_y_pos, 
+    button_width, button_height, 
+    "Standard Mode", highltedOption == GameMode::kStandardMode);
+  DrawButton(x_pos, initial_y_pos + button_height + margin, 
+    button_width, button_height, 
+    "Wall Mode", highltedOption == GameMode::kWallMode);
 
   // Update Screen
   SDL_RenderPresent(sdl_renderer);
@@ -99,33 +169,24 @@ void Renderer::ClearScreen() {
   SDL_RenderClear(sdl_renderer);
 }
 
-void Renderer::DrawButton(int x, int y, int width, int height, bool active=false) {
-  SDL_Rect button = {x, y, width, height};
+void Renderer::DrawButton(int x, int y, int width, int height, const std::string &buttonText, bool active=false) {
+
+  SDL_Color color;
   if (active) {
-    SDL_SetRenderDrawColor(sdl_renderer, 255, 0, 0, 255); // solid red for active
+    color = { 255, 0, 0 }; 
   } else {
-    SDL_SetRenderDrawColor(sdl_renderer, 255, 255, 255, 255);
+    color = { 255, 255, 255 }; 
   }
-  SDL_RenderDrawRect(sdl_renderer, &button);
+
+  const char * text = buttonText.c_str();
+  SDL_Surface* surfaceMessage = TTF_RenderText_Solid(buttonFont, text, color); 
+  SDL_Texture* Message = SDL_CreateTextureFromSurface(sdl_renderer, surfaceMessage);
+
+  SDL_Rect button = {x, y, width, height};
+  SDL_RenderCopy(sdl_renderer, Message, NULL, &button); 
+  SDL_FreeSurface(surfaceMessage);
+  SDL_DestroyTexture(Message);
 }
-
-// void Renderer::DrawButton(int x, int y, int width, int height, bool active=false) {
-//   SDL_Color color;  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
-//   if (active) {
-//     color = {255, 0, 0}; // solid red for active
-//   } else {
-//     color = {255, 255, 255};
-//   }
-
-//   SDL_Surface* surfaceMessage = TTF_RenderText_Solid(NULL, "put your text here", color);
-//   SDL_Texture* Message = SDL_CreateTextureFromSurface(sdl_renderer, surfaceMessage);
-//   SDL_Rect button = {x, y, width, height};
-
-//   SDL_RenderCopy(sdl_renderer, Message, NULL, &button);
-
-//   SDL_FreeSurface(surfaceMessage);
-//   SDL_DestroyTexture(Message);
-// }
 
 void Renderer::UpdateWindowTitle(int score, int fps) {
   std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};

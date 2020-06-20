@@ -5,6 +5,8 @@
 Game::Game(std::size_t grid_width, std::size_t grid_height)
     : snake(grid_width, grid_height),
       mainMenu(MainMenuOptions::kStartGame),
+      difficultyMenu(Difficulty::kNormalDiff),
+      gameModeMenu(GameMode::kStandardMode),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width)),
       random_h(0, static_cast<int>(grid_height)) {
@@ -27,6 +29,12 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     switch(state) {
       case GameState::kMainMenuState: 
         RunMainMenu(controller, renderer, running);
+        break;
+      case GameState::kDifficultyMenuState: 
+        RunDifficultyMenu(controller, renderer, running);
+        break;
+      case GameState::kGameModeMenuState:
+        RunGameModeMenu(controller, renderer, running);
         break;
       case GameState::kGameState:
         RunGame(controller, renderer, running);
@@ -64,16 +72,37 @@ void Game::RunMainMenu(Controller const &controller, Renderer &renderer, bool &r
         state = GameState::kGameState;
         return;
       case MainMenuOptions::kSetGameMode:
+        state = GameState::kGameModeMenuState;
         return;
       case MainMenuOptions::kSetDifficulty:
+        state = GameState::kDifficultyMenuState;
         return;
       case MainMenuOptions::kExitGame:
         running = false;
         return;
     }
   });
-  UpdateMainMenu();
-  renderer.RenderMainMenu(mainMenu);
+  renderer.RenderMenu(mainMenu);
+}
+
+void Game::RunDifficultyMenu(Controller const &controller, Renderer &renderer, bool &running) {
+  // There are 3 options in the difficulty menu as can be seen by the enum Difficulty
+  controller.HandleInputMenu(state, difficultyMenu, 2, [&](Difficulty selectedOption) {
+    gameDifficulty = selectedOption;
+    // std::cout << "Difficulty: " << static_cast<int>(gameDifficulty) << std::endl;
+    state = GameState::kMainMenuState;
+  });
+  renderer.RenderMenu(difficultyMenu);
+}
+
+void Game::RunGameModeMenu(Controller const &controller, Renderer &renderer, bool &running) {
+  // There are 2 options in the difficulty menu as can be seen by the enum Difficulty
+  controller.HandleInputMenu(state, gameModeMenu, 1, [&](GameMode selectedOption){
+    gameMode = selectedOption;
+    // std::cout << "Game Mode: " << static_cast<int>(gameMode) << std::endl;
+    state = GameState::kMainMenuState;
+  });
+  renderer.RenderMenu(gameModeMenu);
 }
 
 void Game::RunGame(Controller const &controller, Renderer &renderer, bool &running) {
@@ -114,8 +143,6 @@ void Game::UpdateGame() {
     snake.speed += 0.02;
   }
 }
-
-void Game::UpdateMainMenu() {}
 
 int Game::GetScore() const { return score; }
 int Game::GetSize() const { return snake.size; }
