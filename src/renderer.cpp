@@ -219,7 +219,7 @@ void Renderer::DrawHeading(int x, int y, int width, int height, const std::strin
   SDL_DestroyTexture(Message);
 }
 
-void Renderer::UpdateWindowTitle(int score, int fps) {
-  std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
+void Renderer::UpdateWindowTitle(int score, int fps, std::string game_mode, std::string difficulty) {
+  std::string title{"Snake Score: " + std::to_string(score) + "    FPS: " + std::to_string(fps) + "    Game Mode: " + game_mode + "    Difficulty: " + difficulty};
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }

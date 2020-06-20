@@ -51,7 +51,20 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(score, frame_count);
+      std::string selected_game_mode = game_mode == GameMode::kWallMode ? "Wall Mode" : "Standard";
+      std::string selected_difficulty = "";
+      switch (game_difficulty) {
+        case Difficulty::kEasyDiff:
+          selected_difficulty = "Easy";
+          break;
+        case Difficulty::kNormalDiff:
+          selected_difficulty = "Normal";
+          break;
+        case Difficulty::kHardDiff:
+          selected_difficulty = "Hard";
+          break;
+      }
+      renderer.UpdateWindowTitle(score, frame_count, selected_game_mode, selected_difficulty);
       frame_count = 0;
       title_timestamp = frame_end;
     }

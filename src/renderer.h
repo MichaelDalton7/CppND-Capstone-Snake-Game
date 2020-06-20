@@ -20,7 +20,7 @@ class Renderer {
   void RenderMenu(GameMenu<MainMenuOptions> const menu);
   void RenderMenu(GameMenu<Difficulty> const menu);
   void RenderMenu(GameMenu<GameMode> const menu);
-  void UpdateWindowTitle(int score, int fps);
+  void UpdateWindowTitle(int score, int fps, std::string game_mode, std::string difficulty);
 
  private:
   SDL_Window *sdl_window;
