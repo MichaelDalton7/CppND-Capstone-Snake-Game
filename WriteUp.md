@@ -5,10 +5,10 @@ My project has built on some additional features to the snake game provided by U
 ## Expected Behaviour 
 When the game is first started the user will be brought to the main menu.
 Here the user will see a number of options:
-    - Start Game
-    - Set Game Mode
-    - Set Difficulty
-    - Exit Game
+  - Start Game
+  - Set Game Mode
+  - Set Difficulty
+  - Exit Game
 
 The user can navigate menus in the application using the arrows keys on their device. 
 To select an option the user can use the Enter/Return key. If the user wants to leave
