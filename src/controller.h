@@ -10,12 +10,12 @@
 
 class Controller {
  public:
-    void HandleInputGame(bool &running, std::shared_ptr<Snake> snake) const;
-    void HandleInputMenu(bool &running, GameMenu<MainMenuOptions> &menu, int lastOptionId, 
+    void HandleGameInput(bool &running, std::shared_ptr<Snake> snake) const;
+    void HandleMenuInput(bool &running, GameMenu<MainMenuOptions> &menu, int lastOptionId, 
                        const std::function <void(MainMenuOptions)> &selectOptionFunction) const;
-    void HandleInputMenu(GameState& state, GameMenu<Difficulty> &menu, int lastOptionId, 
+    void HandleMenuInput(GameState& state, GameMenu<Difficulty> &menu, int lastOptionId, 
                        const std::function <void(Difficulty)> &selectOptionFunction) const;
-    void HandleInputMenu(GameState& state, GameMenu<GameMode> &menu, int lastOptionId, 
+    void HandleMenuInput(GameState& state, GameMenu<GameMode> &menu, int lastOptionId, 
                        const std::function <void(GameMode)> &selectOptionFunction) const;
 
  private:

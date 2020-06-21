@@ -80,7 +80,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
 void Game::RunMainMenu(Controller const &controller, Renderer &renderer, bool &running) {
   // There are 4 options in the main menu as can be seen by the enum MainMenuOptions
-  controller.HandleInputMenu(running, main_menu, 3, [&](MainMenuOptions selectedOption){
+  controller.HandleMenuInput(running, main_menu, 3, [&](MainMenuOptions selectedOption){
     switch(selectedOption) {
       case MainMenuOptions::kStartGame:
         state = GameState::kGameState;
@@ -101,7 +101,7 @@ void Game::RunMainMenu(Controller const &controller, Renderer &renderer, bool &r
 
 void Game::RunDifficultyMenu(Controller const &controller, Renderer &renderer, bool &running) {
   // There are 3 options in the difficulty menu as can be seen by the enum Difficulty
-  controller.HandleInputMenu(state, difficulty_menu, 2, [&](Difficulty selectedOption) {
+  controller.HandleMenuInput(state, difficulty_menu, 2, [&](Difficulty selectedOption) {
     game_difficulty = selectedOption;
     state = GameState::kMainMenuState;
     switch (game_difficulty) {
@@ -121,7 +121,7 @@ void Game::RunDifficultyMenu(Controller const &controller, Renderer &renderer, b
 
 void Game::RunGameModeMenu(Controller const &controller, Renderer &renderer, bool &running) {
   // There are 2 options in the difficulty menu as can be seen by the enum Difficulty
-  controller.HandleInputMenu(state, game_mode_menu, 1, [&](GameMode selectedOption){
+  controller.HandleMenuInput(state, game_mode_menu, 1, [&](GameMode selectedOption){
     game_mode = selectedOption;
     if (game_mode == GameMode::kWallMode) {
       wall_structure->SetShowWall(true);
@@ -134,7 +134,7 @@ void Game::RunGameModeMenu(Controller const &controller, Renderer &renderer, boo
 }
 
 void Game::RunGame(Controller const &controller, Renderer &renderer, bool &running) {
-  controller.HandleInputGame(running, snake);
+  controller.HandleGameInput(running, snake);
   UpdateGame();
   renderer.RenderGame(snake, food, wall_structure);
 }

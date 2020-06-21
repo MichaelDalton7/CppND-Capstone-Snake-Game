@@ -14,7 +14,7 @@ void Controller::ChangeDirectionGame(std::shared_ptr<Snake> snake, Snake::Direct
   return;
 }
 
-void Controller::HandleInputGame(bool &running, std::shared_ptr<Snake> snake) const {
+void Controller::HandleGameInput(bool &running, std::shared_ptr<Snake> snake) const {
   SDL_Event e;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
@@ -48,7 +48,7 @@ void Controller::HandleInputGame(bool &running, std::shared_ptr<Snake> snake) co
   }
 }
 
-void Controller::HandleInputMenu(GameState& state, GameMenu<Difficulty> &menu, int lastOptionId, 
+void Controller::HandleMenuInput(GameState& state, GameMenu<Difficulty> &menu, int lastOptionId, 
                        const std::function <void(Difficulty)> &selectOptionFunction) const {
   std::string input = HandleMenuNavigation(menu, lastOptionId);
   if (input.compare(kReturnKeyId) == 0) {
@@ -58,7 +58,7 @@ void Controller::HandleInputMenu(GameState& state, GameMenu<Difficulty> &menu, i
   }                       
 }
 
-void Controller::HandleInputMenu(GameState& state, GameMenu<GameMode> &menu, int lastOptionId, 
+void Controller::HandleMenuInput(GameState& state, GameMenu<GameMode> &menu, int lastOptionId, 
                        const std::function <void(GameMode)> &selectOptionFunction) const {
   std::string input = HandleMenuNavigation(menu, lastOptionId);
   if (input.compare(kReturnKeyId) == 0) {
@@ -68,7 +68,7 @@ void Controller::HandleInputMenu(GameState& state, GameMenu<GameMode> &menu, int
   }                       
 }
 
-void Controller::HandleInputMenu(bool &running, GameMenu<MainMenuOptions> &menu, int lastOptionId, 
+void Controller::HandleMenuInput(bool &running, GameMenu<MainMenuOptions> &menu, int lastOptionId, 
   								 const std::function <void(MainMenuOptions)> &selectOptionFunction) const {
   std::string input = HandleMenuNavigation(menu, lastOptionId);
   if (input.compare(kReturnKeyId) == 0) {
