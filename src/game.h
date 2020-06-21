@@ -6,7 +6,7 @@
 #include "controller.h"
 #include "renderer.h"
 #include "snake.h"
-#include "menu.h"
+#include "gameMenu.h"
 #include "wallStructure.h"
 
 class Game {
