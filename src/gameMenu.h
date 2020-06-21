@@ -7,12 +7,15 @@ template <typename T>
 class GameMenu {
     public:
         GameMenu(T option): highlightedOption(option) {};
-        T getHighlightedMenuOption() const;
-        void setHighlightedMenuOption(T option);
-        T highlightedOption;
+        T GetHighlightedMenuOption() const {
+            return highlightedOption;
+        };
+        void SetHighlightedMenuOption(int optionId) {
+            highlightedOption = static_cast<T>(optionId);
+        };
 
     private:
-        T selectedOption;
+        T highlightedOption;
 };
 
 #endif

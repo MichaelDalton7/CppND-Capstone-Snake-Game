@@ -52,7 +52,7 @@ void Controller::HandleInputMenu(GameState& state, GameMenu<Difficulty> &menu, i
                        const std::function <void(Difficulty)> &selectOptionFunction) const {
   std::string input = HandleMenuNavigation(menu, lastOptionId);
   if (input.compare(kReturnKeyId) == 0) {
-    selectOptionFunction(menu.highlightedOption);
+    selectOptionFunction(menu.GetHighlightedMenuOption());
   } else if (input.compare(kEscapeKeyId) == 0) {
     state = GameState::kMainMenuState;
   }                       
@@ -62,7 +62,7 @@ void Controller::HandleInputMenu(GameState& state, GameMenu<GameMode> &menu, int
                        const std::function <void(GameMode)> &selectOptionFunction) const {
   std::string input = HandleMenuNavigation(menu, lastOptionId);
   if (input.compare(kReturnKeyId) == 0) {
-    selectOptionFunction(menu.highlightedOption);
+    selectOptionFunction(menu.GetHighlightedMenuOption());
   } else if (input.compare(kEscapeKeyId) == 0) {
     state = GameState::kMainMenuState;
   }                       
@@ -72,7 +72,7 @@ void Controller::HandleInputMenu(bool &running, GameMenu<MainMenuOptions> &menu,
   								 const std::function <void(MainMenuOptions)> &selectOptionFunction) const {
   std::string input = HandleMenuNavigation(menu, lastOptionId);
   if (input.compare(kReturnKeyId) == 0) {
-    selectOptionFunction(menu.highlightedOption);
+    selectOptionFunction(menu.GetHighlightedMenuOption());
   } else if (input.compare(kEscapeKeyId) == 0) {
     running = false;
   }
@@ -81,7 +81,7 @@ void Controller::HandleInputMenu(bool &running, GameMenu<MainMenuOptions> &menu,
 template <typename T>
 std::string Controller::HandleMenuNavigation(GameMenu<T> &menu, int lastOptionId) const {
   SDL_Event e;
-  const int optionId = static_cast<int>(menu.highlightedOption);
+  const int optionId = static_cast<int>(menu.GetHighlightedMenuOption());
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
       return kEscapeKeyId;
@@ -90,13 +90,13 @@ std::string Controller::HandleMenuNavigation(GameMenu<T> &menu, int lastOptionId
         case SDLK_UP:
           // If not the first option change the option
           if (optionId > 0) {
-            menu.highlightedOption = static_cast<T>(optionId - 1);
+            menu.SetHighlightedMenuOption(optionId - 1);
           }
           break;
         case SDLK_DOWN:
           // If not the last option change the option
           if (optionId < lastOptionId) {
-            menu.highlightedOption = static_cast<T>(optionId + 1);
+            menu.SetHighlightedMenuOption(optionId + 1);
           }
           break;
         case SDLK_RETURN:

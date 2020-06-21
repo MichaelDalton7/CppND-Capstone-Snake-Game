@@ -108,7 +108,7 @@ void Renderer::RenderMenu(GameMenu<MainMenuOptions> const menu) {
   int margin = 10;
 
   ClearScreen();
-  const MainMenuOptions highltedOption = menu.highlightedOption;
+  MainMenuOptions highltedOption = menu.GetHighlightedMenuOption();
   DrawHeading(x_pos - 25, initial_y_pos - 90,
     button_width + 50, button_height + 30, "Snake");
   DrawButton(
@@ -138,7 +138,7 @@ void Renderer::RenderMenu(GameMenu<Difficulty> const menu) {
   int margin = 10;
 
   ClearScreen();
-  const Difficulty highltedOption = menu.highlightedOption;
+  Difficulty highltedOption = menu.GetHighlightedMenuOption();
   DrawHeading(x_pos - 75, initial_y_pos - 90,
     button_width + 150, button_height + 30, "Difficulty");
   DrawButton(
@@ -165,7 +165,7 @@ void Renderer::RenderMenu(GameMenu<GameMode> const menu) {
   int margin = 10;
 
   ClearScreen();
-  const GameMode highltedOption = menu.highlightedOption;
+  GameMode highltedOption = menu.GetHighlightedMenuOption();
   DrawHeading(x_pos - 25, initial_y_pos - 90,
     button_width + 50, button_height + 30, "Game Mode");
   DrawButton(
